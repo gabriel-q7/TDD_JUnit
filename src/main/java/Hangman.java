@@ -14,6 +14,12 @@ public class Hangman {
     Set<String> usedWordSet = new HashSet<>();
     List<String> wordsList = new ArrayList<>();
     public static final int MAX_TRIALS = 10;
+    MockScoreDB mockScoreDB;
+
+    public Hangman() {}
+    public Hangman(MockScoreDB mockScoreDB) {
+        this.mockScoreDB = mockScoreDB;
+    }
 
     /**countAlphabet takes a word and an alphabet
      * and returns the number of times the alphabet
@@ -97,5 +103,9 @@ public class Hangman {
 
         //System.out.println("tentativas restantes: " + MAX_TRIALS);
         return result;
+    }
+
+    public boolean saveWordScore(String word, double score) {
+        return mockScoreDB.writeScore(word, score);
     }
 }

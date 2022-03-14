@@ -1,12 +1,13 @@
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class HangmanTest {
 
@@ -132,5 +133,15 @@ class HangmanTest {
         hangman.fetchClue(word, clue, guess);
 
         assertEquals(0 , hangman.score);
+    }
+
+    @Test
+    void test14_savaScoreUsingMockDB() {
+        MockScoreDB mockScoreDB = mock(MockScoreDB.class);
+        Hangman hangman = new Hangman(mockScoreDB);
+        when(mockScoreDB.writeScore("apple",10)).thenReturn(true);
+
+        assertTrue(hangman.saveWordScore("apple", 10));
+
     }
 }
