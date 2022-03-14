@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Set;
 
 public class Hangman {
+
+    public int remainingTrials;
+    public int score = 0;
     Set<String> usedWordSet = new HashSet<>();
     List<String> wordsList = new ArrayList<>();
+    public static final int MAX_TRIALS = 10;
 
     /**countAlphabet takes a word and an alphabet
      * and returns the number of times the alphabet
@@ -28,13 +32,23 @@ public class Hangman {
     }
 
     public String fetchWord(int requestedLength) {
-        for (String result : wordsList) {
-            if (result.length() != requestedLength) continue;
-            else if (usedWordSet.add(result)) return result;
+        String result = null;
+        remainingTrials = MAX_TRIALS;
+
+        for (String word : wordsList) {
+            if (word.length() != requestedLength) continue;
+            else if (usedWordSet.add(word)) {
+                result = word;
+                break;
+            }
         }
-        return null;
+        return result;
     }
 
+    /**
+     * Reads each line that has a word from a file
+     * and adds each word to the wordsList
+     */
     public void loadWords() {
         String word = null;
         try (BufferedReader br = new BufferedReader(new FileReader("WordSource.txt"))) {
@@ -55,15 +69,33 @@ public class Hangman {
         return result;
     }
 
+    /** fetchClue takes a word, its clue with some dashes,
+     * and a character guessed by the player.
+     * It returns a new clue that may or may not be different
+     * from the clue depending on wheter
+     * the word contains the guessed character or not
+     * @param word
+     * @param clue
+     * @param guess
+     * @return
+     */
     public String fetchClue(String word, String clue, char guess) {
+        remainingTrials--;
+
+        if (guess >= 'A' && guess <= 'Z') guess += 32;
+
+        if (guess < 'a' || guess > 'z') throw new IllegalArgumentException("Invalid character");
+
         String result = "";
         for(int i = 0; i < word.length(); i++) {
-            if (guess == word.charAt(i) && guess != clue.charAt(i))
+            if (guess == word.charAt(i) && guess != clue.charAt(i)) {
                 result += guess;
-            else
-                result += clue.charAt(i);
+                score += (double)MAX_TRIALS / word.length();
+            }
+            else result += clue.charAt(i);
         }
 
+        //System.out.println("tentativas restantes: " + MAX_TRIALS);
         return result;
     }
 }
